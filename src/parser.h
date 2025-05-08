@@ -4,9 +4,13 @@
 #include "lexer.h"
 #include "ast.h"
 
+typedef struct {
+    Lexer lexer;
+    Token current;
+} Parser;
+
 void initParser(Parser *parser, const char *source);
 AstNode* parseProgram(Parser *parser);
-// Tambahan:
 void parserError(int line, const char *msg);
 AstNode* parseExpression(Parser *parser);
 
