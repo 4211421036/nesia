@@ -5,7 +5,7 @@
 #include "interpreter.h"
 #include "ast.h"
 #include "error.h"
-#include "include/nesia.h"
+#include "nesia.h"
 
 // Tabel variabel sederhana (asumsi variabel global)
 #define MAX_VARS 100
