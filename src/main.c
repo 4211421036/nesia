@@ -1,15 +1,15 @@
 // main.c
 #include <stdio.h>
-#include "lexer.h"
-#include "parser.h"
-#include "interpreter.h"
+#include <stdlib.h>
 #include "error.h"
+#include "cli.h"
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Penggunaan: nesia <berkas.ns>\n");
         return 1;
     }
+    char *source = malloc(len + 1);
     const char *filename = argv[1];
     // Baca seluruh file ke memori
     FILE *fp = fopen(filename, "r");
