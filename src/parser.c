@@ -5,6 +5,11 @@
 #include "parser.h"
 #include "error.h"
 
+void initParser(Parser *parser, const char *source) {
+    initLexer(&parser->lexer, source);
+    advance(parser);  // Ambil token pertama
+}
+
 static void advance(Parser *parser) {
     parser->current = nextToken(&parser->lexer);
 }
