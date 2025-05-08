@@ -5,6 +5,7 @@
 #include "parser.h"
 #include "interpreter.h"
 
+#ifndef GUI_MODE
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Penggunaan: nesia <berkas.ns>\n");
@@ -33,3 +34,4 @@ int main(int argc, char *argv[]) {
     free(source);
     return 0;
 }
+#endif
