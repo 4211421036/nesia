@@ -13,7 +13,7 @@ OBJS = $(SRC_DIR)/ast.o $(SRC_DIR)/lexer.o $(SRC_DIR)/parser.o \
        $(SRC_DIR)/interpreter.o $(SRC_DIR)/error.o
 
 # Target default
-all: dirs nesia nesia-gui
+all: dirs nesia-cli nesia-gui
 
 # Buat direktori bin jika belum ada
 dirs:
@@ -25,11 +25,11 @@ $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 
 # Link untuk CLI
 nesia-cli: $(OBJS) $(SRC_DIR)/cli.o $(SRC_DIR)/main.o
-       $(CC) $(CFLAGS) -o $(BIN_DIR)/nesia-cli $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/nesia-cli $^ $(LDFLAGS)
 
 # Link untuk GUI
 nesia-gui: $(OBJS) $(SRC_DIR)/gui.o
-       $(CC) $(CFLAGS) -o $(BIN_DIR)/nesia-gui $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/nesia-gui $^ $(LDFLAGS)
 
 # Bersihkan hasil build
 clean:
