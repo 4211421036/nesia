@@ -3,6 +3,8 @@
 #include <string.h>
 #include "ast.h"
 
+#define _POSIX_C_SOURCE 200809L
+
 AstNode* createPrintNode(char *msg, AstNode *expr) {
     AstNode *node = malloc(sizeof(AstNode));
     node->type = AST_PRINT;
