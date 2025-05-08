@@ -1,6 +1,7 @@
 // lexer.c
-#include <ctype.h>
+#define _POSIX_C_SOURCE 200809L
 #include <string.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "lexer.h"
