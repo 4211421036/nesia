@@ -1,4 +1,5 @@
-# Direktori sumber dan biner\ nSRC_DIR = src
+# Direktori sumber dan biner
+SRC_DIR = src
 BIN_DIR = bin
 
 # Compiler & flags
