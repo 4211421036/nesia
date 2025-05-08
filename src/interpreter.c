@@ -1,74 +1,74 @@
-// interpreter.c
 #define _POSIX_C_SOURCE 200809L
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "interpreter.h"
-#include "ast.h"
+#include "parser.h"
 #include "error.h"
-#include "nesia.h"
 
-// Tabel variabel sederhana (asumsi variabel global)
-#define MAX_VARS 100
-char *var_names[MAX_VARS];
-int var_values[MAX_VARS];
-int var_count = 0;
+// Deklarasi forward untuk fungsi static
+static void advance(Parser *parser);
 
-int getVar(const char *name) {
-    for (int i = 0; i < var_count; i++) {
-        if (strcmp(var_names[i], name) == 0) return var_values[i];
-    }
-    // Jika variabel belum ada, definisikan dengan 0
-    var_names[var_count] = strdup(name);
-    var_values[var_count] = 0;
-    var_count++;
-    return 0;
+void initParser(Parser *parser, const char *source) {
+    initLexer(&parser->lexer, source);
+    advance(parser);  // Ambil token pertama
 }
 
-void setVar(const char *name, int value) {
-    for (int i = 0; i < var_count; i++) {
-        if (strcmp(var_names[i], name) == 0) {
-            var_values[i] = value;
-            return;
+static void advance(Parser *parser) {
+    parser->current = nextToken(&parser->lexer);
+}
+
+void parserError(int line, const char *msg) {
+    errorParser(line, msg);
+    exit(1);
+}
+
+AstNode* parseExpression(Parser *parser) {
+    // Stub sederhana: jika token ANGKA, buat literal
+    if (parser->current.type == TOK_ANGKA) {
+        int val = atoi(parser->current.lexeme);
+        AstNode *lit = createLiteralNode(val);
+        advance(parser);
+        return lit;
+    }
+    if (parser->current.type == TOK_IDENT) {
+        AstNode *var = createVarNode(strdup(parser->current.lexeme));
+        advance(parser);
+        return var;
+    }
+    parserError(parser->current.line, "Ekspresi tidak dikenali");
+    return NULL;
+}
+
+AstNode* parseStatement(Parser *parser) {
+    // Contoh parsing print
+    if (parser->current.type == TOK_KATA_KUNCI &&
+        strcmp(parser->current.lexeme, "perintah") == 0) {
+        advance(parser); // lewat 'perintah'
+        if (parser->current.type == TOK_IDENT &&
+            strcmp(parser->current.lexeme, "cetak") == 0) {
+            advance(parser);
+            if (parser->current.type != TOK_PUNCT || strcmp(parser->current.lexeme, "(") != 0)
+                parserError(parser->current.line, "Diharapkan '('");
+            advance(parser);
+            AstNode *expr = parseExpression(parser);
+            if (parser->current.type != TOK_PUNCT || strcmp(parser->current.lexeme, ")") != 0)
+                parserError(parser->current.line, "Diharapkan ')'");
+            advance(parser);
+            if (parser->current.type != TOK_PUNCT || strcmp(parser->current.lexeme, ";") != 0)
+                parserError(parser->current.line, "Diharapkan ';'");
+            advance(parser);
+            return createPrintNode("", expr);
         }
     }
-    // Baru, simpan
-    var_names[var_count] = strdup(name);
-    var_values[var_count] = value;
-    var_count++;
+    parserError(parser->current.line, "Pernyataan tidak dikenal");
+    return NULL;
 }
 
-int evaluate(AstNode *node) {
-    if (!node) return 0;
-    switch (node->type) {
-        case AST_LITERAL:
-            return atoi(node->text);
-        case AST_VAR:
-            return getVar(node->text);
-        // Ekspresi lainnya (misal AST_BINARY op +,*dst) di-skip contoh
-        default:
-            return 0;
+AstNode* parseProgram(Parser *parser) {
+    AstNode *block = createBlockNode();
+    while (parser->current.type != TOK_EOF) {
+        AstNode *stmt = parseStatement(parser);
+        addChild(block, stmt);
     }
-}
-
-void execute(AstNode *node) {
-    if (!node) return;
-    if (node->type == AST_BLOCK) {
-        for (AstNode *stmt = node->left; stmt; stmt = stmt->next) {
-            execute(stmt);
-        }
-    } else if (node->type == AST_PRINT) {
-        int val = evaluate(node->right); // asumsikan hanya ekspresi di kanan
-        printf("%s%d\n", node->text, val); // mencetak teks + nilai
-    } else if (node->type == AST_ASSIGN) {
-        int val = evaluate(node->right);
-        setVar(node->text, val);
-    } else {
-        // tipe AST lainnya...
-    }
-}
-
-// Fungsi entry untuk menjalankan AST program
-void interpret(AstNode *program) {
-    execute(program);
+    return block;
 }
