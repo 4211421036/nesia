@@ -1,9 +1,11 @@
 // interpreter.c
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "interpreter.h"
 #include "ast.h"
 #include "error.h"
+#include "include/nesia.h"
 
 // Tabel variabel sederhana (asumsi variabel global)
 #define MAX_VARS 100
