@@ -1,6 +1,9 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
-char* interpret(const char* input);
+#include "ast.h"
 
-#endif
+// Jalankan AST program Nesia
+void interpret(AstNode *program);
+
+#endif // INTERPRETER_H
