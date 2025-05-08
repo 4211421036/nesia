@@ -1,0 +1,5 @@
+% Program utama menggunakan modul faktorial
+perintah muat("faktorial.nsm");
+perintah cetak("Menghitung faktorial 5:");
+instruksi hasil = faktorial(5);
+perintah cetak("Hasil: " + hasil);
