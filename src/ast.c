@@ -1,71 +1,60 @@
-// interpreter.c
 #include <stdio.h>
 #include <stdlib.h>
-#include "interpreter.h"
+#include <string.h>
 #include "ast.h"
-#include "error.h"
 
-// Tabel variabel sederhana (asumsi variabel global)
-#define MAX_VARS 100
-char *var_names[MAX_VARS];
-int var_values[MAX_VARS];
-int var_count = 0;
-
-int getVar(const char *name) {
-    for (int i = 0; i < var_count; i++) {
-        if (strcmp(var_names[i], name) == 0) return var_values[i];
-    }
-    // Jika variabel belum ada, definisikan dengan 0
-    var_names[var_count] = strdup(name);
-    var_values[var_count] = 0;
-    var_count++;
-    return 0;
+AstNode* createPrintNode(char *msg, AstNode *expr) {
+    AstNode *node = malloc(sizeof(AstNode));
+    node->type = AST_PRINT;
+    node->text = strdup(msg);
+    node->left = NULL;
+    node->right = expr;
+    node->next = NULL;
+    return node;
 }
 
-void setVar(const char *name, int value) {
-    for (int i = 0; i < var_count; i++) {
-        if (strcmp(var_names[i], name) == 0) {
-            var_values[i] = value;
-            return;
-        }
-    }
-    // Baru, simpan
-    var_names[var_count] = strdup(name);
-    var_values[var_count] = value;
-    var_count++;
+AstNode* createAssignNode(char *varname, AstNode *expr) {
+    AstNode *node = malloc(sizeof(AstNode));
+    node->type = AST_ASSIGN;
+    node->text = strdup(varname);
+    node->left = NULL;
+    node->right = expr;
+    node->next = NULL;
+    return node;
 }
 
-int evaluate(AstNode *node) {
-    if (!node) return 0;
-    switch (node->type) {
-        case AST_LITERAL:
-            return atoi(node->text);
-        case AST_VAR:
-            return getVar(node->text);
-        // Ekspresi lainnya (misal AST_BINARY op +,*dst) di-skip contoh
-        default:
-            return 0;
-    }
+AstNode* createLiteralNode(int nilai) {
+    AstNode *node = malloc(sizeof(AstNode));
+    node->type = AST_LITERAL;
+    char buffer[32];
+    sprintf(buffer, "%d", nilai);
+    node->text = strdup(buffer);
+    node->left = node->right = node->next = NULL;
+    return node;
 }
 
-void execute(AstNode *node) {
-    if (!node) return;
-    if (node->type == AST_BLOCK) {
-        for (AstNode *stmt = node->left; stmt; stmt = stmt->next) {
-            execute(stmt);
-        }
-    } else if (node->type == AST_PRINT) {
-        int val = evaluate(node->right); // asumsikan hanya ekspresi di kanan
-        printf("%s%d\n", node->text, val); // mencetak teks + nilai
-    } else if (node->type == AST_ASSIGN) {
-        int val = evaluate(node->right);
-        setVar(node->text, val);
+AstNode* createVarNode(char *name) {
+    AstNode *node = malloc(sizeof(AstNode));
+    node->type = AST_VAR;
+    node->text = strdup(name);
+    node->left = node->right = node->next = NULL;
+    return node;
+}
+
+AstNode* createBlockNode() {
+    AstNode *node = malloc(sizeof(AstNode));
+    node->type = AST_BLOCK;
+    node->text = NULL;
+    node->left = node->right = node->next = NULL;
+    return node;
+}
+
+void addChild(AstNode *block, AstNode *stmt) {
+    if (!block->left) {
+        block->left = stmt;
     } else {
-        // tipe AST lainnya...
+        AstNode *cur = block->left;
+        while (cur->next) cur = cur->next;
+        cur->next = stmt;
     }
-}
-
-// Fungsi entry untuk menjalankan AST program
-void interpret(AstNode *program) {
-    execute(program);
 }
