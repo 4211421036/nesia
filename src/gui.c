@@ -1,4 +1,6 @@
 // gui.c
+#define GUI_MODE
+#include "main.h"
 #include <SDL.h>
 #include <stdio.h>
 
