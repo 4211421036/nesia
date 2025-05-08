@@ -1,9 +1,18 @@
-#ifndef INTERPRETER_H
-#define INTERPRETER_H
+#ifndef PARSER_H
+#define PARSER_H
 
+#include "lexer.h"
 #include "ast.h"
 
-// Jalankan AST program Nesia
-void interpret(AstNode *program);
+typedef struct {
+    Lexer lexer;
+    Token current;
+} Parser;
 
-#endif // INTERPRETER_H
+void initParser(Parser *parser, const char *source);
+AstNode* parseProgram(Parser *parser);
+void parserError(int line, const char *msg);
+AstNode* parseExpression(Parser *parser);
+AstNode* parseStatement(Parser *parser);
+
+#endif
