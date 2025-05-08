@@ -1,0 +1,37 @@
+name: Build and Run Nesia
+
+on:
+  push:
+    paths:
+      - '**/*.c'
+      - '**/*.h'
+      - 'Makefile'
+      - '.github/workflows/run.yml'
+  pull_request:
+    paths:
+      - '**/*.c'
+      - '**/*.h'
+      - 'Makefile'
+      - '.github/workflows/run.yml'
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev
+
+      - name: Build NESIA
+        run: make
+
+      - name: Run sample script
+        run: |
+          chmod +x bin/nesia
+          ./bin/nesia examples/contoh.ns > output.log
+          cat output.log
