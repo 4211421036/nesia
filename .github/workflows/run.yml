@@ -1,4 +1,4 @@
-name: Build and Run Nesia
+name: Build and Run Nesia Lang
 
 on:
   push:
