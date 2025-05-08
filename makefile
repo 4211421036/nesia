@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Iinclude $(shell sdl2-config --cflags)
+CFLAGS = -Iinclude -I/usr/include/SDL2 -std=c11 -Wall
 LDFLAGS = $(shell sdl2-config --libs)
 
 SRCS = src/ast.c src/cli.c src/error.c src/gui.c src/interpreter.c \
