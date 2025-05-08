@@ -1,0 +1,11 @@
+% Modul faktorial dalam bahasa Nesia
+modul faktorial {
+    fungsi faktorial(n) {
+        jika (n <= 1) {
+            kembalikan 1;
+        } lain {
+            instruksi hasil = n * faktorial(n - 1);
+            kembalikan hasil;
+        }
+    }
+}
